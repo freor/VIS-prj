@@ -1,0 +1,28 @@
+{
+  "nodes": [
+    {"id": "YouTube", "group": 0},
+    {"id": "Gaming", "group": 1},
+    {"id": "Sports", "group": 2},
+    {"id": "Music", "group": 3},
+    {"id": "Documentary", "group": 4},
+    {"id": "Entertainment", "group": 5},
+    {"id": "HowTo&Style", "group": 6},
+    {"id": "News&Politics", "group": 7},
+    {"id": "보겸TV", "group": 0},
+    {"id": "보겸TV", "group": 1},
+    {"id": "보겸TV", "group": 5}
+  ],
+  "links": [
+    {"source": "YouTube", "target": "Gaming", "value": 1},
+    {"source": "YouTube", "target": "Sports", "value": 2},
+    {"source": "YouTube", "target": "Music", "value": 3},
+    {"source": "YouTube", "target": "Documentary", "value": 4},
+    {"source": "YouTube", "target": "Entertainment", "value": 5},
+    {"source": "YouTube", "target": "HowTo&Style", "value": 6},
+    {"source": "YouTube", "target": "News&Politics", "value": 7},
+    {"source": "YouTube", "target": "보겸TV", "value": 8},
+    {"source": "보겸TV", "target": "Gaming", "value": 9},
+    {"source": "보겸TV", "target": "Entertainment", "value": 10},
+    {"source": "보겸TV", "target": "YouTube", "value": 11}
+  ]
+}
