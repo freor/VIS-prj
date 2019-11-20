@@ -10,4 +10,4 @@
 
 - node-edge-graph: d3 grpah code
 
-- thumbnail_net: thumbnail analysis code
+- thumbnail_net: thumbnail analysis code using pretrained resnet
