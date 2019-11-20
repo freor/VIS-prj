@@ -4,7 +4,6 @@ from collections import OrderedDict
 import time
 
 csvfile = open('../data/CAvideos.csv', 'r')
-jsonfile = open('../youtube-json/new_CAvideos.json', 'w')
 
 # 'key' extraction
 spamreader = csv.reader(csvfile, delimiter=',')
@@ -13,7 +12,8 @@ print("key", key)
 main_key = "video_id"
 
 n_top = 100 # extract top-100
-sort_base = "likes"
+sort_base = "likes" # "likes"
+jsonfile = open('../youtube-json/' + sort_base + '_CAvideos.json', 'w')
 
 data = []
 
@@ -28,3 +28,6 @@ datas = OrderedDict()
 datas["nodes"] = data[:n_top]
 
 json.dump(datas, jsonfile, indent='\t')
+
+
+
