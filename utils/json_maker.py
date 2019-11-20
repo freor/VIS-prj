@@ -3,8 +3,8 @@ import json
 from collections import OrderedDict
 import time
 
-csvfile = open('./data/CAvideos.csv', 'r')
-jsonfile = open('./youtube-json/new_CAvideos.json', 'w')
+csvfile = open('../data/CAvideos.csv', 'r')
+jsonfile = open('../youtube-json/new_CAvideos.json', 'w')
 
 # 'key' extraction
 spamreader = csv.reader(csvfile, delimiter=',')
