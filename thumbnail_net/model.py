@@ -12,6 +12,8 @@ import time
 jsonfile = open('../youtube-json/new_CAvideos.json', 'r')
 fpath = "../thumbnail_img/"
 
+new_jsonfile = open('./thumbnail_vector.json', 'w')
+
 d = json.load(jsonfile)["nodes"]
 
 ext = ".jpg" # image file extension
@@ -31,10 +33,15 @@ preprocess = transforms.Compose([
 ])
 
 
+datas = {}
+
 for i in d:
     fn = fpath + i["id"] + ext
 
-    input_image = Image.open(fn)
+    try:
+        input_image = Image.open(fn)
+    except:
+        continue
     print(input_image.size)
 
     input_tensor = preprocess(input_image)
@@ -46,6 +53,11 @@ for i in d:
 
     with torch.no_grad():
         output = model(input_batch)
+    output = output.squeeze()
+
+    d = output.cpu().detach().numpy()
+    #d = ' '.join([str(i) for i in d])
+    datas[i["id"]] = [str(i) for i in d]#d#str(output.cpu().detach().numpy())
 
     print(output.shape) # (1, 512, 1, 1)
 
@@ -55,7 +67,7 @@ for i in d:
     # The output has unnormalized scores. To get probabilities, you can run a softmax on it.
     print(torch.nn.functional.softmax(output[0], dim=0))
     '''
+    #time.sleep(10)
 
-    time.sleep(10)
-
+json.dump(datas, new_jsonfile)#, indent='\t')
 
