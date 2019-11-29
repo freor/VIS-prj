@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+	.link {
+	  stroke: #c1c1c1;
+    stroke-width: 2px;
+    pointer-events: all;
+	}
+  .node circle {
+	  pointer-events: all;
+	  stroke: #777;
+	  stroke-width: 1px;
+	}
+	div.tooltip {
+    position: absolute;
+    background-color: white;
+    max-width; 200px;
+    height: auto;
+    padding: 1px;
+    border-style: solid;
+    border-radius: 4px;
+    border-width: 1px;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, .5);
+    pointer-events: none;
+  }
+
+</style>
+<body>
+</body>
+<svg width="900" height="900"></svg>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.24.0/d3-legend.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<script>
+//각 카테고리별 색깔-------------------------------------------------------------
+var color = d3.scaleOrdinal(d3.schemeSet3);
+  color(0);
+  color(1);
+  color(2);
+  color(3);
+  color(4);
+  color(5);
+  color(6);
+  color(7);
+  color(8);
+  color(9);
+  color(10);
+//------------------------------------------------------------------------------
+//마우스를 노드 위에 올렸을 때 나오는 tooltip--------------------------------------
+var tooltip = d3.select("body")
+	.append("div")
+	.attr("class", "tooltip")
+	.style("opacity", 0);
+//------------------------------------------------------------------------------
+//json 파일 불러와서 구현 하는 부분-----------------------------------------------
+d3.json("views_CAvideos.json", function(error, graph) {
+  if (error) throw error;
+  //위에 svg를 만들고 width와 height을 설정하는 부분------------------------------
+ 	const svg = d3.select('svg'),
+        width = +svg.attr('width'),
+  			height = +svg.attr('height');
+  //----------------------------------------------------------------------------
+
+  //forceSimulation을 써서 node와 link(edge)를 연결
+  const simulation = d3.forceSimulation()
+    //node initialize-----------------------------------------------------------
+    .nodes(graph.nodes)
+    //Edge를 연결할 때 json에 있는 channel_title로 연결---------------------------
+    .force('link', d3.forceLink().id(d => d.channel_title))
+    //같은 그룹끼리 뭉치게 하는 forceManyBody-------------------------------------
+    .force('charge', d3.forceManyBody())
+    //전체적인 Node들을 SVG 사이즈 중간에 놓도록 하는 method-----------------------
+    .force('center', d3.forceCenter(width / 2, height / 2))
+    .on('tick', ticked);
+
+  simulation.force('link')
+    //edge initialize-----------------------------------------------------------
+    .links(graph.links);
+
+  //노드 지름 설정부분-----------------------------------------------------------
+  const R = 7;
+  //----------------------------------------------------------------------------
+
+  //Edge 생성 및 drag 설정 부분--------------------------------------------------
+  let link = svg.selectAll('line')
+    .data(graph.links)
+    .enter().append('line');
+
+  link
+    .attr('class', 'link')
+  	.on('mouseover.tooltip', function(d) {
+      	tooltip.transition()
+        	.duration(300)
+        	.style("opacity", .8);
+      	tooltip.html(d.source.category_id +
+                     " and " + d.target.category_id)
+        	.style("left", (d3.event.pageX) + "px")
+        	.style("top", (d3.event.pageY + 10) + "px");
+    	})
+    	.on("mouseout.tooltip", function() {
+	      tooltip.transition()
+	        .duration(100)
+	        .style("opacity", 0);
+	    })
+  		.on('mouseout.fade', fade(1))
+	    .on("mousemove", function() {
+	      tooltip.style("left", (d3.event.pageX) + "px")
+	        .style("top", (d3.event.pageY + 10) + "px");
+	    });
+  //----------------------------------------------------------------------------
+
+  //노드 생성 및 drag 설정 부분---------------------------------------------------
+  let node = svg.selectAll('.node')
+    .data(graph.nodes)
+    .enter().append('g')
+    .attr('class', 'node')
+    .call(d3.drag()
+    	.on("start", dragstarted)
+      .on("drag", dragged)
+      .on("end", dragended));;
+  //----------------------------------------------------------------------------
+
+  //각각의 노드 추가 부분과 tooltip 관련 설정 부분---------------------------------
+  node.append('circle')
+    .attr('r', R)
+  	.attr("fill", function(d) { return color(parseInt(d.group));})
+    .on('mouseover.tooltip', function(d) {
+      	tooltip.transition()
+        	.duration(300)
+        	.style("opacity", .8);
+      	tooltip.html("Category: " + d.category_id + "<p/>Channel: " + d.channel_title + "<p/>Views: " + d.views)
+        	.style("left", (d3.event.pageX) + "px")
+        	.style("top", (d3.event.pageY + 10) + "px");
+    	})
+  	.on('mouseover.fade', fade(0.1))
+    .on("mouseout.tooltip", function() {
+        tooltip.transition()
+	        .duration(100)
+	        .style("opacity", 0);
+	    })
+  	.on('mouseout.fade', fade(1))
+	    .on("mousemove", function() {
+	      tooltip.style("left", (d3.event.pageX) + "px")
+	        .style("top", (d3.event.pageY + 10) + "px");
+	    })
+  	.on('dblclick',releasenode)
+  //----------------------------------------------------------------------------
+
+  function ticked() {
+    link
+      .attr('x1', d => d.source.x)
+      .attr('y1', d => d.source.y)
+      .attr('x2', d => d.target.x)
+      .attr('y2', d => d.target.y);
+
+    node
+      .attr('transform', d => `translate(${d.x},${d.y})`);
+  }
+  //사용자가 마우스로 drag 할 수 있는 function들----------------------------------
+  function dragstarted(d) {
+    if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+    d.fx = d.x;
+    d.fy = d.y;
+  }
+
+  function dragged(d) {
+    d.fx = d3.event.x;
+    d.fy = d3.event.y;
+  }
+
+  function dragended(d) {
+    if (!d3.event.active) simulation.alphaTarget(0);
+    //d.fx = null;
+    //d.fy = null;
+  }
+  function releasenode(d) {
+      d.fx = null;
+      d.fy = null;
+  }
+  //----------------------------------------------------------------------------
+
+  //json에 있는 source와 target을 가지고 연결해주는 부분---------------------------
+  const linkedByIndex = {};
+  graph.links.forEach(d => {
+    linkedByIndex[`${d.source.index},${d.target.index}`] = 1;
+  });
+
+  function isConnected(a, b) {
+    return linkedByIndex[`${a.index},${b.index}`] || linkedByIndex[`${b.index},${a.index}`] || a.index === b.index;
+  }
+  //----------------------------------------------------------------------------
+
+  //마우스를 노드와 link 위에 올렸을 때 opacity주는 부분---------------------------
+  //그런데 link위에 올렸을 때는 fade가 되지 않음...--------------------------------
+  function fade(opacity) {
+    return d => {
+      node.style('stroke-opacity', function (o) {
+        const thisOpacity = isConnected(d, o) ? 1 : opacity;
+        this.setAttribute('fill-opacity', thisOpacity);
+        return thisOpacity;
+      });
+
+      link.style('stroke-opacity', o => (o.source === d || o.target === d ? 1 : opacity));
+
+    };
+  }
+  //----------------------------------------------------------------------------
+
+  //카테고리 별로 색깔 지정해주는 부분---------------------------------------------
+  var sequentialScale = d3.scaleOrdinal(d3.schemeSet3)
+  .domain(["YouTube", "Entertainment", "Video Blogging", "Music", "News&Politics", "Sports", "Film&Animation", "Comedy", "Gaming", "Science&Tech", "Autos&Vehicles", "Education"]);
+  //----------------------------------------------------------------------------
+
+  //Category legend 추가 및 설정 부분--------------------------------------------
+  svg.append("g")
+    .attr("class", "legendSequential")
+    .attr("transform", "translate("+(width-250)+","+(height-330)+")");
+
+  var legendSequential = d3.legendColor()
+      .shapeWidth(30)
+      .cells(13)
+      .orient("vertical")
+	  	.title("Category:")
+	  	.titleWidth(100)
+      .scale(sequentialScale)
+
+  svg.select(".legendSequential")
+      .call(legendSequential);
+  //----------------------------------------------------------------------------
+}) //d3.json("views_INvideos.json", function(error, graph) 끝나는부분
+
+</script>
