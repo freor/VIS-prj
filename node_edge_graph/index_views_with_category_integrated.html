@@ -103,6 +103,7 @@ d3.json("views_CAvideos.json", function(error, graph) {
         	.style("left", (d3.event.pageX) + "px")
         	.style("top", (d3.event.pageY + 10) + "px");
     	})
+        .on('mouseover.fade', link_fade(0.1)) // TODO
     	.on("mouseout.tooltip", function() {
 	      tooltip.transition()
 	        .duration(100)
@@ -198,6 +199,7 @@ d3.json("views_CAvideos.json", function(error, graph) {
 
   //마우스를 노드와 link 위에 올렸을 때 opacity주는 부분---------------------------
   //그런데 link위에 올렸을 때는 fade가 되지 않음...--------------------------------
+    // TODO
   function fade(opacity) {
     return d => {
       node.style('stroke-opacity', function (o) {
@@ -209,6 +211,18 @@ d3.json("views_CAvideos.json", function(error, graph) {
       link.style('stroke-opacity', o => (o.source === d || o.target === d ? 1 : opacity));
 
     };
+  }
+
+  function link_fade(opacity) {
+      return d => {
+          node.style('stroke-opacity', function (o) {
+            const thisOpacity = (o.channel_title === d.source.channel_title || o.channel_title === d.target.channel_title ? 1 : opacity)
+            this.setAttribute('fill-opacity', thisOpacity);
+            return thisOpacity;
+          });
+          //console.log(d.source.channel_title, d.target.channel_title);
+          link.style('stroke-opacity', o => (o.source.channel_title === d.source.channel_title && o.target.channel_title === d.target.channel_title ? 1 : opacity));
+      }
   }
   //----------------------------------------------------------------------------
 
@@ -284,6 +298,7 @@ d3.json("views_GBvideos.json", function(error, graph) {
         	.style("left", (d3.event.pageX) + "px")
         	.style("top", (d3.event.pageY + 10) + "px");
     	})
+.on('mouseover.fade', link_fade(0.1)) // TODO
     	.on("mouseout.tooltip", function() {
 	      tooltip.transition()
 	        .duration(100)
@@ -325,7 +340,6 @@ d3.json("views_GBvideos.json", function(error, graph) {
 	        .duration(100)
 	        .style("opacity", 0);
 	    })
-  	.on('mouseout.fade', fade(1))
 	    .on("mousemove", function() {
 	      tooltip.style("left", (d3.event.pageX) + "px")
 	        .style("top", (d3.event.pageY + 10) + "px");
@@ -390,6 +404,17 @@ d3.json("views_GBvideos.json", function(error, graph) {
       link.style('stroke-opacity', o => (o.source === d || o.target === d ? 1 : opacity));
 
     };
+  }
+function link_fade(opacity) {
+      return d => {
+          node.style('stroke-opacity', function (o) {
+            const thisOpacity = (o.channel_title === d.source.channel_title || o.channel_title === d.target.channel_title ? 1 : opacity)
+            this.setAttribute('fill-opacity', thisOpacity);
+            return thisOpacity;
+          });
+          //console.log(d.source.channel_title, d.target.channel_title);
+          link.style('stroke-opacity', o => (o.source.channel_title === d.source.channel_title && o.target.channel_title === d.target.channel_title ? 1 : opacity));
+      }
   }
   //----------------------------------------------------------------------------
 
@@ -465,6 +490,7 @@ d3.json("views_INvideos.json", function(error, graph) {
         	.style("left", (d3.event.pageX) + "px")
         	.style("top", (d3.event.pageY + 10) + "px");
     	})
+ .on('mouseover.fade', link_fade(0.1)) // TODO
     	.on("mouseout.tooltip", function() {
 	      tooltip.transition()
 	        .duration(100)
@@ -571,6 +597,17 @@ d3.json("views_INvideos.json", function(error, graph) {
       link.style('stroke-opacity', o => (o.source === d || o.target === d ? 1 : opacity));
 
     };
+  }
+function link_fade(opacity) {
+      return d => {
+          node.style('stroke-opacity', function (o) {
+            const thisOpacity = (o.channel_title === d.source.channel_title || o.channel_title === d.target.channel_title ? 1 : opacity)
+            this.setAttribute('fill-opacity', thisOpacity);
+            return thisOpacity;
+          });
+          //console.log(d.source.channel_title, d.target.channel_title);
+          link.style('stroke-opacity', o => (o.source.channel_title === d.source.channel_title && o.target.channel_title === d.target.channel_title ? 1 : opacity));
+      }
   }
   //----------------------------------------------------------------------------
 
