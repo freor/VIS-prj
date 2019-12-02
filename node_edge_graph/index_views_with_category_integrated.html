@@ -138,12 +138,15 @@ d3.json("views_CAvideos.json", function(error, graph) {
       	tooltip.html("Category: " + d.category_id + "<p/>Channel: " + d.channel_title + "<p/>Views: " + d.views)
         	.style("left", (d3.event.pageX) + "px")
         	.style("top", (d3.event.pageY + 10) + "px");
+        c = d3.select(this).attr('fill');
+        node_sink(c, 0.1);
     	})
   	.on('mouseover.fade', fade(0.1))
     .on("mouseout.tooltip", function() {
         tooltip.transition()
 	        .duration(100)
 	        .style("opacity", 0);
+        all_sink();
 	    })
   	.on('mouseout.fade', fade(1))
 	    .on("mousemove", function() {
@@ -209,7 +212,6 @@ d3.json("views_CAvideos.json", function(error, graph) {
       });
 
       link.style('stroke-opacity', o => (o.source === d || o.target === d ? 1 : opacity));
-
     };
   }
 
@@ -224,6 +226,19 @@ d3.json("views_CAvideos.json", function(error, graph) {
           link.style('stroke-opacity', o => (o.source.channel_title === d.source.channel_title && o.target.channel_title === d.target.channel_title ? 1 : opacity));
       }
   }
+
+  function node_sink(c, opacity) {
+          d3.selectAll('circle')
+          .filter(function(d){ 
+              return c  != color(parseInt(d.group))
+          })
+              .attr('fill-opacity', opacity);
+  }
+
+  function all_sink(){
+      d3.selectAll('circle').attr('fill-opacity', 1);
+  }
+
   //----------------------------------------------------------------------------
 
   //카테고리 별로 색깔 지정해주는 부분---------------------------------------------
@@ -333,12 +348,15 @@ d3.json("views_GBvideos.json", function(error, graph) {
       	tooltip.html("Category: " + d.category_id + "<p/>Channel: " + d.channel_title + "<p/>Views: " + d.views)
         	.style("left", (d3.event.pageX) + "px")
         	.style("top", (d3.event.pageY + 10) + "px");
+c = d3.select(this).attr('fill');
+        node_sink(c, 0.1);
     	})
   	.on('mouseover.fade', fade(0.1))
     .on("mouseout.tooltip", function() {
         tooltip.transition()
 	        .duration(100)
 	        .style("opacity", 0);
+  all_sink();
 	    })
         .on('mouseout.fade', fade(1))
 
@@ -417,6 +435,17 @@ function link_fade(opacity) {
           //console.log(d.source.channel_title, d.target.channel_title);
           link.style('stroke-opacity', o => (o.source.channel_title === d.source.channel_title && o.target.channel_title === d.target.channel_title ? 1 : opacity));
       }
+  }
+function node_sink(c, opacity) {
+          d3.selectAll('circle')
+          .filter(function(d){ 
+              return c  != color(parseInt(d.group))
+          })
+              .attr('fill-opacity', opacity);
+  }
+
+  function all_sink(){
+      d3.selectAll('circle').attr('fill-opacity', 1);
   }
   //----------------------------------------------------------------------------
 
@@ -527,12 +556,15 @@ d3.json("views_INvideos.json", function(error, graph) {
       	tooltip.html("Category: " + d.category_id + "<p/>Channel: " + d.channel_title + "<p/>Views: " + d.views)
         	.style("left", (d3.event.pageX) + "px")
         	.style("top", (d3.event.pageY + 10) + "px");
+c = d3.select(this).attr('fill');
+        node_sink(c, 0.1);
     	})
   	.on('mouseover.fade', fade(0.1))
     .on("mouseout.tooltip", function() {
         tooltip.transition()
 	        .duration(100)
 	        .style("opacity", 0);
+  all_sink();
 	    })
   	.on('mouseout.fade', fade(1))
 	    .on("mousemove", function() {
@@ -611,6 +643,18 @@ function link_fade(opacity) {
           link.style('stroke-opacity', o => (o.source.channel_title === d.source.channel_title && o.target.channel_title === d.target.channel_title ? 1 : opacity));
       }
   }
+
+  function node_sink(c, opacity) {
+          d3.selectAll('circle')
+          .filter(function(d){ 
+              return c  != color(parseInt(d.group))
+          })
+              .attr('fill-opacity', opacity);
+  }
+
+  function all_sink(){
+      d3.selectAll('circle').attr('fill-opacity', 1);
+  }
   //----------------------------------------------------------------------------
 
   //카테고리 별로 색깔 지정해주는 부분---------------------------------------------
@@ -635,4 +679,6 @@ function link_fade(opacity) {
       .call(legendSequential);
   //----------------------------------------------------------------------------
 }) //d3.json("views_INvideos.json", function(error, graph) 끝나는부분
+
+
 </script>
