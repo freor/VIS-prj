@@ -9,10 +9,10 @@ import json
 import os
 import time
 
-jsonfile = open('../youtube-json/new_CAvideos.json', 'r')
+jsonfile = open('../youtube-json/likes_CAvideos.json', 'r')
 fpath = "../thumbnail_img/"
 
-new_jsonfile = open('./thumbnail_vector.json', 'w')
+new_jsonfile = open('./likes_CA_thumbnail_vector.json', 'w')
 
 d = json.load(jsonfile)["nodes"]
 

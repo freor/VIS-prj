@@ -3,8 +3,8 @@ from sklearn.manifold import Isomap
 from sklearn.decomposition import PCA
 import json
 from pathlib import Path
-import fire  # pip install fire 
-import numpy as np 
+import fire  # pip install fire
+import numpy as np
 
 
 def vec_pca(vectors_dict):
@@ -20,7 +20,7 @@ def vec_isomap(vectors_dict):
 	keys = list(vectors_dict.keys())
 	vec2d = dic2arr2d(vectors_dict)
 	iso_xys = iso.fit_transform(vec2d)
-	
+
 	return arr2d2dic(iso_xys, keys)
 
 def dic2arr2d(dat):
@@ -40,19 +40,20 @@ def str2float(raw_dat):
 	dat = dict.fromkeys(raw_dat.keys())
 	for key in dat:
 		val = [float(i) for i in raw_dat[key]]
-		dat[key] = val 
+		dat[key] = val
 
-	return dat 
+	return dat
 
-def main(filepath= 'thumbnail_net/thumbnail_vector.json', 
+def main(filepath= 'thumbnail_net/thumbnail_vector.json',
 		 algorithm= 'pca', newfilename= None ):
 	'''
-	kwargs: 
+	kwargs:
 	--filepath [filepath]
 	--algorithm [pca, isomap]
 	--newfilename [type what you want: not necessary]
 	'''
-	write_name = f'{algorithm}.json' if newfilename is None else f'{algorithm}_{newfilename}.json'
+    #write_name = f'{algorithm}.json' if newfilename is None else f'{algorithm}_{newfilename}.json'
+	write_name = str(algorithm)+".json" if newfilename is None else str(algorithm)+"_"+str(newfilename)+".json"
 
 	filepath = Path(filepath)
 	write_name = Path(write_name)
@@ -67,13 +68,13 @@ def main(filepath= 'thumbnail_net/thumbnail_vector.json',
 	with write_name.open(mode='w') as f:
 		json.dump(result2d_dict, f)
 
-	print(f"\n\nDONE!\n{str(filepath)} is processed with {algorithm} and saved to {write_name}")
-
+	#print(f"\n\nDONE!\n{str(filepath)} is processed with {algorithm} and saved to {write_name}")
+	print("DONE")
 
 
 if __name__ == '__main__':
-	usage = '''usage:\npython vec2pca_isomap \n[\n\t--filepath thumbnailjsonPATH.json \n\t--algorithm pca or isomap (default pca) \n\t--newfilename NAME_YOU_WANT(not necessary)\n]'''
-	print(usage)	
+	#usage = '''usage:\npython vec2pca_isomap \n[\n\t--filepath thumbnailjsonPATH.json \n\t--algorithm pca or isomap (default pca) \n\t--newfilename NAME_YOU_WANT(not necessary)\n]'''
+	#print(usage)
 	fire.Fire(main)
 
 
