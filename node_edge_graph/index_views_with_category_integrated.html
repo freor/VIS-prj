@@ -12,7 +12,7 @@
 	  stroke-width: 1px;
 	}
 	div.tooltip {
-    position: absolute;
+    position: relative;
     background-color: white;
     max-width; 200px;
     height: auto;
@@ -26,7 +26,7 @@
 div.tt {
     position: absolute;
     background-color: white;
-    max-width; 1000px;
+    max-width; 960px;
     height: auto;
     padding: 1px;
     border-style: solid;
@@ -42,6 +42,7 @@ div.tt {
 <svg width="900" height="900" id="nodeedge1"></svg>
 <svg width="900" height="900" id="nodeedge2"></svg>
 <svg width="900" height="900" id="nodeedge3"></svg>
+<svg width="900" hegith="900"></svg>
 <svg width="960" height="600" id="th1"></svg>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.24.0/d3-legend.min.js"></script>
@@ -49,7 +50,7 @@ div.tt {
 <script>
 
 var tt = d3.select("body").append("div").attr("class", "img").append("svg")
-    .attr("height", 1000).attr("width", 1000).attr("class", "tt").style("opacity", 0);
+    .attr("height", 800).attr("width", 800).attr("class", "tt").style("opacity", 0);
 var svg = d3.select("#th1"),
     width = +svg.attr("width"),
     height = +svg.attr("height");
@@ -743,7 +744,7 @@ var node = svg.append("g")
         .enter()
         .append("circle")
         .attr("r", 5)
-        .attr("fill", "red") //d => color(parseInt(vv[d["category_id"]])))
+        .attr("fill", d => color(Math.random())) //d => color(parseInt(vv[d["category_id"]])))
 		.on("mouseover.tt", function(d){
 tt.transition().duration(300)
 .style("opacity", .8);
@@ -755,8 +756,8 @@ tt.transition().duration(300)
 
 tt.append('image')
 .attr('xlink:href', "../thumbnail_img/" + d["name"] + ".jpg")
-.attr("width",1000)
-.attr("height",1000);
+.attr("width",800)
+.attr("height",800);
 
 
 //.style("left", (d3.event.pageX) + "px").style("top", (d3.event.pageY) + "px");
