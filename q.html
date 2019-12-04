@@ -11,43 +11,70 @@
   stroke: #fff;
   stroke-width: 1.5px;
 }
+div.tt {
+    position: absolute;
+    background-color: white;
+    max-width; 300px;
+    height: auto;
+    padding: 1px;
+    border-style: solid;
+    border-radius: 4px;
+    border-width: 1px;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, .5);
+    pointer-events: none;
+  }
 
 </style>
+<body>
 <svg width="960" height="600"></svg>
+</body>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script>
+
+var tt = d3.select("body").append("div").attr("class", "img").append("svg")
+    .attr("height", 500).attr("width", 500).attr("class", "tt").style("opacity", 0);
+
+
+
 //create somewhere to put the force directed graph
 var svg = d3.select("svg"),
     width = +svg.attr("width"),
     height = +svg.attr("height");
 
-
-var nodes_data =  [
-    {"name": "Travis", "sex": "M"},
-    {"name": "Rake", "sex": "M"},
-    {"name": "Diana", "sex": "F"},
-    {"name": "Rachel", "sex": "F"},
-    {"name": "Shawn", "sex": "M"},
-    {"name": "Emerald", "sex": "F"}
-    ]
+d3.json("./pca.json", function(error, graph){
+	data = graph;
+	var nodes_data = [];
+	for(var key in data) {
+		nodes_data.push({"name": key, "pos": [data[key][0] * 1000 + 960/2, data[key][1] * 1000 + 600/2]});
+	}
 
 
+    let vv = {}
+    d3.json("./node_edge_graph/views_CAvideos.json", function(error, g){
+        var dd = g["nodes"];
 
-//set up the simulation
-//nodes only for now
+        for(key of dd){
+            vv[key["video_id"]] = key["views"];
+        }
+    });
+        console.log(vv);
+
+ 
+
+
+
 var simulation = d3.forceSimulation()
-                    //add nodes
-                    .nodes(nodes_data);
-
+					//add nodes
+					.nodes(nodes_data);	
+                    
 //add forces
-//we're going to add a charge to each node
+//we're going to add a charge to each node 
 //also going to add a centering force
 simulation
     .force("charge_force", d3.forceManyBody())
     .force("center_force", d3.forceCenter(width / 2, height / 2));
 
 
-//draw circles for the nodes
 var node = svg.append("g")
         .attr("class", "nodes")
         .selectAll("circle")
@@ -55,65 +82,59 @@ var node = svg.append("g")
         .enter()
         .append("circle")
         .attr("r", 5)
-        .attr("fill", "red");
+        .attr("fill", "red")
+		.on("mouseover.tt", function(d){
+tt.transition().duration(300)
+.style("opacity", .8);
+
+// TODO: Image
+
+d3.select(".img").append('text').text("HH");
+            console.log(vv[d["name"]]);
+
+tt.append('image')
+.attr('xlink:href', "thumbnail_img/" + d["name"] + ".jpg")
+//.style("left", (d3.event.pageX) + "px").style("top", (d3.event.pageY) + "px")
+.attr("width",300)
+.attr("height",300);
+
+
+d3.select(".img").attr("x", 500);
 
 
 
-//add tick instructions:
+//.style("left", (d3.event.pageX) + "px").style("top", (d3.event.pageY) + "px");
+
+
+
+})
+		.on("mouseout.tt", function(d){
+tt.transition().duration(300).style("opacity", 0);
+tt.select("image").remove();
+});
+
+        
+//add tick instructions: 
 simulation.on("tick", tickActions );
 
 
-//Time for the links
-
-//Create links data
-var links_data = [
-    {"source": "Travis", "target": "Rake"},
-    {"source": "Diana", "target": "Rake"},
-    {"source": "Diana", "target": "Rachel"},
-    {"source": "Rachel", "target": "Rake"},
-    {"source": "Rachel", "target": "Shawn"},
-    {"source": "Emerald", "target": "Rachel"}
-]
-
-
-
-//Create the link force
-//We need the id accessor to use named sources and targets
-
-var link_force =  d3.forceLink(links_data)
-                        .id(function(d) { return d.name; })
-
-//Add a links force to the simulation
-//Specify links  in d3.forceLink argument
-
-
-simulation.force("links",link_force)
-
-//draw lines for the links
-var link = svg.append("g")
-      .attr("class", "links")
-    .selectAll("line")
-    .data(links_data)
-    .enter().append("line")
-      .attr("stroke-width", 2);
-
-
+//Time for the links 
+             
+                
 function tickActions() {
-    //update circle positions each tick of the simulation
+    //update circle positions each tick of the simulation 
     node
-        .attr("cx", function(d) { return d.x; })
-        .attr("cy", function(d) { return d.y; });
-
-    //update link positions
+        .attr("cx", function(d) { return d['pos'][0]; })
+        .attr("cy", function(d) { return d['pos'][1]; });
+        
+    //update link positions 
     //simply tells one end of the line to follow one node around
     //and the other end of the line to follow the other node around
-    link
-        .attr("x1", function(d) { return d.source.x; })
-        .attr("y1", function(d) { return d.source.y; })
-        .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y; });
+     }                    
+});
 
-  }
 
+    
 
 </script>
+
